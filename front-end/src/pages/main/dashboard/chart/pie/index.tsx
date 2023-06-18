@@ -14,8 +14,8 @@ const PieChart = (props, ref) => {
         trigger: 'item',
       },
       legend: {
-        top: '5%',
-        left: 'center',
+        orient: 'vertical',
+        left: 'left',
       },
       series: [
         {
@@ -46,18 +46,6 @@ const PieChart = (props, ref) => {
           ],
         },
       ],
-      toolbox: {
-        show: true,
-        feature: {
-          saveAsImage: {
-            name: 'pie',
-            title: '保存图片',
-            show: true,
-            excludeComponents: ['toolbox'],
-            pixelRatio: 2,
-          },
-        },
-      },
     };
     return option;
   };
@@ -66,7 +54,7 @@ const PieChart = (props, ref) => {
     getEchartsInstance: () => pieRef.current.getEchartsInstance(),
   }));
 
-  return <ReactEcharts ref={pieRef} option={getOption()} />;
+  return <ReactEcharts ref={pieRef} option={getOption()} opts={{ renderer: 'svg' }} />;
 };
 
 export default forwardRef(PieChart);

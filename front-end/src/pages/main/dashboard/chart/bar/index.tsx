@@ -27,7 +27,7 @@ const BarChart = (props, ref) => {
   useImperativeHandle(ref, () => ({
     getEchartsInstance: () => barRef.current.getEchartsInstance(),
   }));
-  return <ReactEcharts ref={barRef} option={getOption()} />;
+  return <ReactEcharts ref={barRef} option={getOption()} opts={{ renderer: 'svg' }} />;
 };
 
 export default forwardRef(BarChart);
