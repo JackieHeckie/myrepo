@@ -20,27 +20,28 @@ export default memo<IProps>(function DraggableContainer({
   layout = 'row',
 }) {
   const volatileRef = children[0]?.ref;
-  console.log(children[0])
 
   const DividerRef = useRef<HTMLDivElement | null>(null);
   const DividerLine = useRef<HTMLDivElement | null>(null);
   const [dragging, setDragging] = useState(false);
 
-  const isRow = layout === 'row'
+  const isRow = layout === 'row';
 
   useEffect(() => {
     if (!DividerRef.current) {
       return;
     }
-    DividerRef.current.onmouseover = (e) => {
-      setDragging(true);
-    };
-    DividerRef.current.onmouseout = (e) => {
-      setDragging(false);
-    };
+    // DividerRef.current.onmouseover = (e) => {
+    //   setDragging(true);
+    // };
+    // DividerRef.current.onmouseout = (e) => {
+    //   setDragging(false);
+    // };
 
     DividerRef.current.onmousedown = (e) => {
       if (!volatileRef?.current) return;
+      console.log(volatileRef?.curren);
+
       e.preventDefault();
       setDragging(true);
       const clientStart = isRow ? e.clientX : e.clientY;
@@ -102,7 +103,6 @@ export default memo<IProps>(function DraggableContainer({
             className={classnames(
               styles.dividerCenter,
               { [styles.dragging]: dragging },
-              { [styles.rowDragging]: dragging && isRow },
             )}
           />
         </div>
