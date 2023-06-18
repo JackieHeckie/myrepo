@@ -2,11 +2,12 @@ import React, { memo, useEffect, useRef, useState } from 'react';
 import { connect, Dispatch } from 'umi';
 import styles from './index.less';
 import classnames from 'classnames';
-import { IChatData, IChatDataItem } from '@/typings/dashboard';
+import { IChatData, IChatDataItem, IChatDataSortItem } from '@/typings/dashboard';
 import DraggableContainer from '@/components/DraggableContainer';
 import Iconfont from '@/components/Iconfont';
 import ChartItem from './chart-item';
 import { Button } from 'antd';
+import { ReactSortable, Store } from 'react-sortablejs';
 import { GlobalState } from '@/models/global';
 
 interface IProps {
@@ -36,8 +37,7 @@ function Chart(props: IProps) {
   const { className } = props;
 
   const [dataList, setDataList] = useState(initDataList);
-  const [curItem, setCurItem] = useState<IChatData>();
-  const volatileRef = useRef<any>();
+  const [curItem, setCurItem] = useState<IChatData>(dataList[0]);
 
   useEffect(() => {
     // TODO: 获取列表数据
@@ -49,6 +49,13 @@ function Chart(props: IProps) {
     const { data, name } = curItem || {};
     if (!data) return;
 
+    const sortData = (data || []).reduce((acc: IChatDataSortItem[], cur, i) => {
+      const tmp = (cur || []).map((c, ii) => ({ id: `${i}_${ii}`, ...c }));
+      acc.push(...tmp);
+      return acc;
+    }, []);
+
+    console.log(sortData, 'sortData');
     return (
       <>
         <div className={styles.box_right_title}>
@@ -57,38 +64,46 @@ function Chart(props: IProps) {
         </div>
 
         <div className={styles.box_right_content}>
-          {data.map((rowData, i) => (
-            <div key={i} className={styles.box_right_content_row}>
-              {rowData.map((item, index) => (
-                <div className={styles.box_right_content_column}>
+          {/* <ReactSortable
+            list={sortData}
+            setList={(newState: IChatDataSortItem[], sortable: any, store: Store) => {
+              // throw new Error('Function not implemented.');
+            }}
+            onAdd={() => {}}
+          > */}
+          {data.map((rowData, rowIndex) => (
+            <div key={rowIndex} className={styles.box_right_content_row}>
+              {rowData.map((item, colIndex) => (
+                <div className={styles.box_right_content_column} style={{ width: `${100 / rowData.length}%` }}>
                   <ChartItem
-                    index={index}
-                    key={`${i}_${index}`}
+                    id={`${rowIndex}_${colIndex}`}
+                    index={colIndex}
+                    key={`${rowIndex}_${colIndex}`}
                     data={item}
                     connections={[]}
                     canAddRowItem={rowData.length < 3}
                     addChartTop={() => {
-                      data.splice(index + 1, 0, [initChartItemData]);
+                      data.splice(rowIndex, 0, [initChartItemData]);
                       setDataList([...dataList]);
                     }}
                     addChartBottom={() => {
-                      data.splice(index + 1, 0, [initChartItemData]);
+                      data.splice(rowIndex + 1, 0, [initChartItemData]);
                       setDataList([...dataList]);
                     }}
                     addChartLeft={() => {
-                      rowData.splice(index, 0, initChartItemData);
+                      rowData.splice(colIndex, 0, initChartItemData);
                       setDataList([...dataList]);
                     }}
                     addChartRight={() => {
-                      rowData.splice(index + 1, 0, initChartItemData);
+                      rowData.splice(colIndex + 1, 0, initChartItemData);
                       setDataList([...dataList]);
                     }}
                     onDelete={() => {
                       if (rowData.length === 1) {
-                        data.splice(i, 1);
+                        data.splice(rowIndex, 1);
                         setDataList([...dataList]);
                       } else {
-                        rowData.splice(i, 1);
+                        rowData.splice(colIndex, 1);
                         setDataList([...dataList]);
                       }
                     }}
@@ -97,31 +112,22 @@ function Chart(props: IProps) {
               ))}
             </div>
           ))}
+          {/* </ReactSortable> */}
         </div>
       </>
     );
   };
 
   return (
-    <DraggableContainer
-      volatileDom={{
-        volatileRef,
-        volatileIndex: 0,
-      }}
-      className={classnames(styles.box, className)}
-    >
-      <div ref={volatileRef} className={styles.box_left}>
+    <DraggableContainer layout="row" className={classnames(styles.box, className)}>
+      <div className={styles.box_left}>
         <div className={styles.box_left_title}>Dashboard</div>
         {(dataList || []).map((i, index) => (
-          <div
-            key={index}
-            className={styles.box_left_item}
-            onClick={() => setCurItem(i)}
-          >
+          <div key={index} className={styles.box_left_item} onClick={() => setCurItem(i)}>
             <div>{i.name}</div>
           </div>
         ))}
-
+        {/* 
         <Button
           onClick={() => {
             props.dispatch({
@@ -134,7 +140,7 @@ function Chart(props: IProps) {
           }}
         >
           测试dva
-        </Button>
+        </Button> */}
       </div>
       <div className={styles.box_right}>{renderContent()}</div>
     </DraggableContainer>

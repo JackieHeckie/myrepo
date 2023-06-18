@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { forwardRef, useImperativeHandle, useRef } from 'react';
 import * as charts from 'echarts';
 import ReactEcharts from 'echarts-for-react';
 import './index.less';
 type EChartsOption = charts.EChartsOption;
 
-const BarChart = () => {
+const BarChart = (props, ref) => {
+  const barRef = useRef<any>(null);
   const getOption = () => {
     const option: EChartsOption = {
       xAxis: {
@@ -23,13 +24,10 @@ const BarChart = () => {
     };
     return option;
   };
-  return (
-    <>
-      <div>
-        <ReactEcharts option={getOption()} />
-      </div>
-    </>
-  );
+  useImperativeHandle(ref, () => ({
+    getEchartsInstance: () => barRef.current.getEchartsInstance(),
+  }));
+  return <ReactEcharts ref={barRef} option={getOption()} />;
 };
 
-export default BarChart;
+export default forwardRef(BarChart);

@@ -11,3 +11,7 @@ export interface IChatDataItem {
   chatType: IChatType;
   chatParam: any;
 }
+
+export interface IChatDataSortItem extends IChatDataItem {
+  id: string;
+}

@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { LegacyRef, useImperativeHandle, useRef } from 'react';
 import * as charts from 'echarts';
 import ReactEcharts from 'echarts-for-react';
 import './index.less';
+import { Button } from 'antd';
+import { forwardRef } from 'react';
 type EChartsOption = charts.EChartsOption;
 
-const PieChart = () => {
+const PieChart = (props, ref) => {
+  const pieRef = useRef<any>(null);
   const getOption = () => {
     const option: EChartsOption = {
       tooltip: {
@@ -27,7 +30,7 @@ const PieChart = () => {
           emphasis: {
             label: {
               show: true,
-              fontSize: 40,
+              fontSize: 20,
               fontWeight: 'bold',
             },
           },
@@ -43,16 +46,27 @@ const PieChart = () => {
           ],
         },
       ],
+      toolbox: {
+        show: true,
+        feature: {
+          saveAsImage: {
+            name: 'pie',
+            title: '保存图片',
+            show: true,
+            excludeComponents: ['toolbox'],
+            pixelRatio: 2,
+          },
+        },
+      },
     };
     return option;
   };
-  return (
-    <>
-      <div>
-        <ReactEcharts option={getOption()} />
-      </div>
-    </>
-  );
+
+  useImperativeHandle(ref, () => ({
+    getEchartsInstance: () => pieRef.current.getEchartsInstance(),
+  }));
+
+  return <ReactEcharts ref={pieRef} option={getOption()} />;
 };
 
-export default PieChart;
+export default forwardRef(PieChart);
