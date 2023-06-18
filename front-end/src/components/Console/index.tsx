@@ -5,10 +5,29 @@ import React, { ForwardedRef, useMemo, useRef, useState } from 'react';
 import ChatInput from './ChatInput';
 import Editor, { IExportRefFunction } from './MonacoEditor';
 import { format } from 'sql-formatter';
+import sqlServer from '@/service/sql';
+import historyServer from '@/service/history';
 import MonacoEditor from 'react-monaco-editor';
 
 import styles from './index.less';
 import Loading from '../Loading/Loading';
+import { DatabaseTypeCode } from '@/constants/database';
+
+enum IPromptType {
+  NL_2_SQL = 'NL_2_SQL',
+  SQL_EXPLAIN = 'SQL_EXPLAIN',
+  SQL_OPTIMIZER = 'SQL_OPTIMIZER',
+  SQL_2_SQL = 'SQL_2_SQL',
+  ChatRobot = 'ChatRobot',
+}
+
+enum IPromptTypeText {
+  NL_2_SQL = '自然语言转换',
+  SQL_EXPLAIN = '解释SQL',
+  SQL_OPTIMIZER = 'SQL优化',
+  SQL_2_SQL = 'SQL转换',
+  ChatRobot = 'Chat机器人',
+}
 
 interface IProps {
   /** 是否开启AI输入 */
@@ -59,6 +78,78 @@ function Console(props: IProps) {
     });
   };
 
+  const executeSQL = () => {
+    let sqlContent = editorRef?.current?.getCurrentSelectContent();
+    if (!sqlContent) {
+      sqlContent = editorRef?.current?.getAllContent();
+    }
+    if (!sqlContent) {
+      return;
+    }
+
+    // let p = {
+    //   sql: sqlContent,
+    //   type: DatabaseTypeCode.MYSQL,
+    //   consoleId: 1,
+    //   dataSourceId: 1,
+    //   databaseName: 'haha',
+    //   schemaName: windowTab?.schemaName,
+    // };
+    // sqlServer
+    //   .executeSql(p)
+    //   .then((res) => {
+    //     let p = {
+    //       dataSourceId: windowTab?.dataSourceId,
+    //       databaseName: windowTab?.databaseName,
+    //       name: windowTab?.name,
+    //       ddl: sql,
+    //       type: windowTab.DBType,
+    //     };
+    //     historyServer.createHistory(p);
+    //     // setManageResultDataList(res);
+    //   })
+    //   .catch((error) => {
+    //     // setManageResultDataList([]);
+    //   });
+  };
+
+  const saveWindowTab = () => {
+    // let p = {
+    //   id: windowTab.consoleId,
+    //   name: windowTab?.name,
+    //   type: windowTab.DBType,
+    //   dataSourceId: +params.id,
+    //   databaseName: windowTab.databaseName,
+    //   status: WindowTabStatus.RELEASE,
+    //   ddl: getMonacoEditorValue(),
+    // };
+    // historyServer.updateWindowTab(p).then((res) => {
+    //   message.success('保存成功');
+    // });
+  };
+
+  const addAction = [
+    {
+      id: 'explainSQL',
+      label: '解释SQL',
+      action: (selectedText: string) => handleAIRelativeOperation(IPromptType.SQL_EXPLAIN, selectedText),
+    },
+    {
+      id: 'optimizeSQL',
+      label: '优化SQL',
+      action: (selectedText: string) => handleAIRelativeOperation(IPromptType.SQL_OPTIMIZER, selectedText),
+    },
+    {
+      id: 'changeSQL',
+      label: 'SQL转化',
+      action: (selectedText: string) => handleAIRelativeOperation(IPromptType.SQL_2_SQL, selectedText),
+    },
+  ];
+
+  const handleAIRelativeOperation = (id: string, selectedText: string) => {
+    console.log('handleAIRelativeOperation', id, selectedText);
+  };
+
   return (
     <div className={styles.console}>
       <Spin spinning={isLoading} style={{ height: '100%' }}>
@@ -70,33 +161,18 @@ function Console(props: IProps) {
           value={context}
           onChange={(v) => setContext(v)}
           className={hasAiChat ? styles.console_editor_with_chat : styles.console_editor}
+          addAction={addAction}
         />
-        {/* <MonacoEditor
-          // id={0}
-          value={context}
-          onChange={(v) => setContext(v)}
-          className={hasAiChat ? styles.console_editor_with_chat : styles.console_editor}
-        /> */}
       </Spin>
 
       <div className={styles.console_options_wrapper}>
         <div>
-          <Button
-            type="primary"
-            style={{ marginRight: '10px' }}
-            onClick={() => {
-              let curContent = editorRef?.current?.getCurrentSelectContent();
-              if (!curContent) {
-                curContent = editorRef?.current?.getAllContent();
-              }
-              if (!curContent) {
-                return;
-              }
-            }}
-          >
+          <Button type="primary" style={{ marginRight: '10px' }} onClick={executeSQL}>
             RUN
           </Button>
-          <Button type="default">SAVE</Button>
+          <Button type="default" onClick={saveWindowTab}>
+            SAVE
+          </Button>
         </div>
         <Button
           type="text"
