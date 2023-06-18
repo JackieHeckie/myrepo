@@ -1,22 +1,33 @@
-import React, { memo, useEffect, useRef, useState } from 'react';
+import React, { memo, useEffect, useRef, useState, useReducer, useContext } from 'react';
 import styles from './index.less';
 import DraggableContainer from '@/components/DraggableContainer';
-
 import WorkspaceLeft from './components/WorkspaceLeft';
 import WorkspaceRight from './components/WorkspaceRight';
-import { ConfigProvider, theme } from 'antd';
-const { useToken } = theme
+import { reducer, initState, workspaceActionType, IState }from './context';
 
 interface IProps {
   className?: string;
 }
 
-export default memo<IProps>(function workspace(props) {
-  const { className } = props;
-  const draggableRef = useRef<any>();
-  const { token } = useToken();
+interface IContext {
+  state: IState;
+  dispatch: any;
+}
+export const WorkspaceContext = React.createContext<IContext>({
+  state: initState,
+  dispatch: () => {},
+});
 
-  return (
+export const useReducerContext = () => {
+  return useContext(WorkspaceContext);
+};
+
+
+export default memo<IProps>(function workspace(props) {
+  const draggableRef = useRef<any>();
+  const [state, dispatch] = useReducer(reducer, initState);
+
+  return <WorkspaceContext.Provider value={{state, dispatch}}>
     <DraggableContainer className={styles.box}>
       <div ref={draggableRef} className={styles.box_left}>
         <WorkspaceLeft ></WorkspaceLeft>
@@ -25,5 +36,5 @@ export default memo<IProps>(function workspace(props) {
         <WorkspaceRight></WorkspaceRight>
       </div>
     </DraggableContainer>
-  );
+  </WorkspaceContext.Provider>
 });

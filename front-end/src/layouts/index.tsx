@@ -26,6 +26,7 @@ declare global {
     _APP_PORT: string;
     _BUILD_TIME: string;
     _BaseURL: string;
+    _AppThemePack: { [key in string]: string };
   }
   const __APP_VERSION__: string;
   const __BUILD_TIME__: string;
@@ -49,8 +50,6 @@ export default function Layout() {
   const [antdTheme, setAntdTheme] = useState<any>({});
 
   useLayoutEffect(() => {
-    ;
-
     setAntdTheme(getAntdThemeConfig(appTheme));
   }, [appTheme]);
 

@@ -90,14 +90,17 @@
 
 .modalBox {
   display: flex;
-  margin: -10px;
+  margin: -16px;
   height: 70vh;
+  overflow-y: auto;
 }
 
 .menus {
   width: 200px;
-  background-color: var(--color-bg-medium);
+  background-color: var(--color-bg-elevated);
   padding: 20px;
+  position: sticky;
+  top: 0;
   .menusTitle {
     font-size: 16px;
     padding-bottom: 10px;
@@ -125,6 +128,8 @@
   min-height: 400px;
   padding: 20px;
   flex: 1;
+  background-color: var(--color-bg-base);
+
   .menuContentTitle {
     font-size: 16px;
     padding-bottom: 20px;

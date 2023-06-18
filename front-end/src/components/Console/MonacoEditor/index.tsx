@@ -22,17 +22,15 @@ interface IProps {
   didMount?: (editor: IEditorIns) => any;
   options?: IEditorOptions;
   needDestroy?: boolean;
+  addAction?: Array<{ id: string; label: string; action: (selectedText: string) => void }>;
 }
 
-export interface IExportRefFunction{
+export interface IExportRefFunction {
   getCurrentSelectContent: () => string;
   getAllContent: () => string;
 }
 
-function MonacoEditor(
-  props: IProps,
-  ref: ForwardedRef<IExportRefFunction>,
-) {
+function MonacoEditor(props: IProps, ref: ForwardedRef<IExportRefFunction>) {
   const { id, className, value = '', language = 'sql', didMount, options } = props;
 
   const editorRef = useRef<IEditorIns>();
@@ -76,7 +74,7 @@ function MonacoEditor(
       ...options,
       value,
       language: 'sql',
-      theme: appTheme.backgroundColor === ThemeType.Light ? 'default' : 'BlackTheme',
+      theme: appTheme.backgroundColor === ThemeType.Light ? 'Default' : 'BlackTheme',
     });
     editorRef.current = editorIns;
     didMount && didMount(editorIns); // incase parent component wanna handle editor
@@ -88,7 +86,17 @@ function MonacoEditor(
       colors: {
         // 相关颜色属性配置
         'editor.foreground': '#ffffff',
-        'editor.background': '#22272e', //背景色
+        'editor.background': '#0A0B0C', //背景色
+      },
+    });
+
+    monaco.editor.defineTheme('Default', {
+      base: 'vs',
+      inherit: true,
+      rules: [{ background: '#15161a' }],
+      colors: {
+        'editor.foreground': '#000000',
+        'editor.background': '#fff', //背景色
       },
     });
 
@@ -223,23 +231,26 @@ function MonacoEditor(
     // 用于控制切换该菜单键的显示
     const shouldShowSqlRunnerAction = editor.createContextKey('shouldShowSqlRunnerAction', true);
 
-    // 前面已经定义了 editor
-    // 添加 action
-    editor.addAction({
-      // id
-      id: 'sql-runner',
-      // 该菜单键显示文本
-      label: '运行选中SQL语句',
-      // 控制该菜单键显示
-      precondition: 'shouldShowSqlRunnerAction',
-      // 该菜单键位置
-      contextMenuGroupId: 'navigation',
-      contextMenuOrder: 1.5,
-      // 点击该菜单键后运行
-      run: (event) => {
-        // 光标位置
-        alert(event.getPosition());
-      },
+    if (!props.addAction || !props.addAction.length) {
+      return;
+    }
+
+    props.addAction.forEach((action) => {
+      const { id, label, action: runFn } = action;
+      editor.addAction({
+        id,
+        label,
+        // 控制该菜单键显示
+        precondition: 'shouldShowSqlRunnerAction',
+        // 该菜单键位置
+        contextMenuGroupId: 'navigation',
+        contextMenuOrder: 1.5,
+        // 点击该菜单键后运行
+        run: (event: monaco.editor.ICodeEditor) => {
+          const selectedText = editor.getModel()?.getValueInRange(editor.getSelection()!) || '';
+          runFn(selectedText);
+        },
+      });
     });
   };
   return <div ref={ref} id={`monaco-editor-${id}`} className={cs(className, styles.editorContainer)} />;

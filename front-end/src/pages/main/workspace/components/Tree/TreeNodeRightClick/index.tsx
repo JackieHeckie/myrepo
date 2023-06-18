@@ -12,7 +12,7 @@ import { ITreeConfigItem, ITreeConfig, treeConfig } from '@/components/Tree/tree
 import { ITreeNode } from '@/types';
 import { DatabaseContext } from '@/context/database';
 import connectionServer from '@/service/connection';
-import mysqlServer from '@/service/mysql';
+import mysqlServer from '@/service/sql';
 import { OperationColumn } from '../treeConfig';
 import { dataSourceFormConfigs } from '@/config/dataSource';
 import { IConnectionConfig } from '@/config/types';

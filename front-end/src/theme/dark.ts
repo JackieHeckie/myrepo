@@ -26,6 +26,9 @@ const antDarkTheme = {
     "wireframe": true,
     "borderRadius": 4,
     "colorBgBase": "#0a0b0c",
+    "colorBgContainer": "#0a0b0c",
+    "colorBgElevated": "#131418",
+    "colorBorder": "#36373a"
   }
 }
 

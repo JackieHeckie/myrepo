@@ -34,6 +34,7 @@ export function InjectThemeVar(token: { [key in string]: string }, theme: ThemeT
   style.appendChild(document.createTextNode(container));
 
   document.head.appendChild(style); // 将style标签插入到head标签中
+  window._AppThemePack = token;
 }
 
 function camelToDash(str:string) {

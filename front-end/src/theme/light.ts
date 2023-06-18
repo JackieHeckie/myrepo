@@ -25,7 +25,9 @@ const antdLightTheme = {
   token: {
     "wireframe": true,
     "borderRadius": 4,
-    "colorBgElevated": "#F8F9FA"
+    "colorBgContainer": "#fff",
+    "colorBgElevated": "#F8F9FA",
+    "colorBorder": "#d3d3d4"
   }
 }
 

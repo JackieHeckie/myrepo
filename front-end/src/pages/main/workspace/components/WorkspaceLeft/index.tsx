@@ -1,19 +1,21 @@
-import React, { memo, useState, useEffect, useRef } from 'react';
+import React, { memo, useState, useEffect, useRef, useContext } from 'react';
 import styles from './index.less';
 import classnames from 'classnames';
 import { Cascader, Divider } from 'antd';
 import connectionService from '@/service/connection';
-import { getCurrentWorkspaceDatabase, setCurrentWorkspaceDatabase } from '@/utils/localStorage';
 import { treeConfig } from '../Tree/treeConfig';
 import Iconfont from '@/components/Iconfont';
 import { TreeNodeType } from '@/constants/tree';
-
+import { useReducerContext } from '../../index';
+import { workspaceActionType } from '../../context';
 interface IProps {
   className?: string;
 }
 
 export default memo<IProps>(function WorkspaceLeft(props) {
   const { className } = props;
+  const { state, dispatch } = useReducerContext();
+  const {currentDatabase} = state;
 
   return <div className={classnames(styles.box, className)}>
     <div className={styles.header}>
@@ -21,7 +23,12 @@ export default memo<IProps>(function WorkspaceLeft(props) {
     </div>
     <div className={styles.save_box}>Save</div>
     <Divider />
-    <div className={styles.table_box}>connection</div>
+    <div className={styles.table_box}>
+      connection
+      <div>{currentDatabase.databaseSourceId}</div>
+      <div>{currentDatabase.databaseName}</div>
+      <div>{currentDatabase.schemaName}</div>
+    </div>
   </div>
 })
 
@@ -31,14 +38,11 @@ interface Option {
   children?: Option[];
 }
 
-export interface ICurrentWorkspaceDatabase {
-  labelArr: string[];
-  valueArr: number[];
-}
 
 export function RenderSelectDatabase() {
   const [options, setOptions] = useState<Option[]>();
-  const [currentSelected, setCurrentSelected] = useState<ICurrentWorkspaceDatabase>(getCurrentWorkspaceDatabase());
+  const { state, dispatch } = useReducerContext();
+  const {currentDatabase} = state
 
   useEffect(() => {
     getDataSource();
@@ -67,12 +71,23 @@ export function RenderSelectDatabase() {
     labelArr = selectedOptions.map((t) => {
       return t.label;
     });
+
     const currentWorkspaceDatabase = {
       labelArr,
       valueArr,
     }
-    setCurrentSelected(currentWorkspaceDatabase);
-    setCurrentWorkspaceDatabase(currentWorkspaceDatabase);
+
+    const currentDatabase = {
+      databaseSourceId: valueArr[0],
+      databaseSourceName: labelArr[0],
+      databaseName: labelArr[1],
+      schemaName: labelArr[2],
+    }
+
+    dispatch({
+      type:workspaceActionType.CURRENT_DATABASE, 
+      payload: currentDatabase
+    });
   };
 
   const loadData = (selectedOptions: any) => {
@@ -120,6 +135,13 @@ export function RenderSelectDatabase() {
     </div>
   );
 
+  function renderCurrentSelected(){
+    const {databaseName, schemaName, databaseSourceName} = currentDatabase
+    const currentSelectedArr = [databaseSourceName,databaseName,schemaName].filter(t=>t);
+    return currentSelectedArr.join('/')
+  }
+
+
   return (
     <div className={styles.select_database_box}>
       <Cascader
@@ -132,7 +154,7 @@ export function RenderSelectDatabase() {
       >
         <div className={styles.current_database}>
           <div className={styles.name}>
-            {currentSelected.labelArr.join('/') || '点我选择'}
+            {renderCurrentSelected()}
           </div>
           <Iconfont code="&#xe608;" />
         </div>

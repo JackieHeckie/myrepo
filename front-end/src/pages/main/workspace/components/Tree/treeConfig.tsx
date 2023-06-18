@@ -1,7 +1,7 @@
 import { ITreeNode } from '@/typings/tree';
 import { TreeNodeType } from '@/constants/tree';
 import connectionService from '@/service/connection';
-import mysqlServer, { ISchemaParams, IGetListParams, ITableParams } from '@/service/mysql';
+import mysqlServer, { ISchemaParams, IGetListParams, ITableParams } from '@/service/sql';
 
 
 export type ITreeConfig = Partial<{ [key in TreeNodeType]: ITreeConfigItem }>;

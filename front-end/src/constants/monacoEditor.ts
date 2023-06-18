@@ -7,12 +7,25 @@ export const editorDefaultOptions: IEditorOptions = {
   dragAndDrop: false,
   fontSize: 12,
   tabSize: 2,
+  lineHeight: 18,
+  theme: 'vscode',
+  roundedSelection: false,
+  readOnly: false,
+  folding: false, // 不显示折叠
+  insertSpaces: true,
+  autoClosingQuotes: 'always',
+  detectIndentation: false,
+  wordWrap: 'on',
+  fixedOverflowWidgets: true,
+  renderLineHighlight: 'none',
+  codeLens: false,
+  scrollbar: {
+    alwaysConsumeMouseWheel: false,
+  },
   padding: {
     top: 2,
     bottom: 2,
   },
-  lineHeight: 18,
-  theme: 'vscode',
   minimap: {
     enabled: false,
   },

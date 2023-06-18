@@ -14,7 +14,7 @@ export default memo<IProps>(function WorkspaceRight(props) {
   return <div className={classnames(styles.box, className)}>
     <DraggableContainer layout="column" className={styles.box_right_center}>
       <div ref={draggableRef} className={styles.box_right_console}>
-        <Console canAi2Lang={false} />
+        <Console hasAiChat={true}  hasAi2Lang={true}/>
       </div>
       <div className={styles.box_right_result}>
         <p>Result</p>

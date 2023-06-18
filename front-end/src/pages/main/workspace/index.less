@@ -8,6 +8,7 @@
 .box_left {
   width: 260px;
   height: 100%;
+  overflow: hidden;
 }
 
 .box_right {
@@ -15,7 +16,7 @@
   z-index: 1; //为了覆盖左侧 Cascader
   flex: 1;
   width: 0px;
-  background-color: var(--color-bg);
+  background-color: var(--color-bg-base);
 }
 
 .box_right_center {
@@ -28,7 +29,6 @@
 }
 
 .box_right_result {
-  border-top: 1px solid red;
   height: 0px;
   flex: 1;
 }
