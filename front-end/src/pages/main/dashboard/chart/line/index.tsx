@@ -21,6 +21,9 @@ const LineChart = (props, ref) => {
           type: 'line',
         },
       ],
+      legend: {
+        show: true,
+      },
     };
     return option;
   };
@@ -28,7 +31,7 @@ const LineChart = (props, ref) => {
   useImperativeHandle(ref, () => ({
     getEchartsInstance: () => lineRef.current.getEchartsInstance(),
   }));
-  return <ReactEcharts ref={lineRef} option={getOption()} />;
+  return <ReactEcharts ref={lineRef} option={getOption()} opts={{ renderer: 'svg' }} />;
 };
 
 export default forwardRef(LineChart);
