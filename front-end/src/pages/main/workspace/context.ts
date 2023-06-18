@@ -2,7 +2,7 @@ import {getCurrentWorkspaceDatabase, setCurrentWorkspaceDatabase } from '@/utils
 
 export type ICurrentDatabase = {
   databaseSourceName?: string;
-  databaseSourceId?: number;
+  dataSourceId?: number;
   databaseName?: string;
   schemaName?: string;
 }
@@ -32,7 +32,6 @@ export const reducer = (preState: IState, action: IAction ) => {
       return changeCurrentDatabase(preState,payload);
   }
 }
-
 
 function changeCurrentDatabase(preState:IState, payload:any){
   setCurrentWorkspaceDatabase(payload);

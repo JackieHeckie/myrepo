@@ -20,19 +20,19 @@ export const switchIcon: Partial<{ [key in TreeNodeType]: { icon: string } }> = 
     icon: '\ueac5'
   },
   [TreeNodeType.COLUMNS]: {
-    icon: '\ueac5'
+    icon: '\ueabe'
   },
   [TreeNodeType.COLUMN]: {
     icon: '\ue611'
   },
   [TreeNodeType.KEYS]: {
-    icon: '\ueac5'
+    icon: '\ueabe'
   },
   [TreeNodeType.KEY]: {
     icon: '\ue775'
   },
   [TreeNodeType.INDEXES]: {
-    icon: '\ueac5'
+    icon: '\ueabe'
   },
   [TreeNodeType.INDEX]: {
     icon: '\ue65b'
@@ -51,7 +51,7 @@ export enum OperationColumn {
 
 export interface ITreeConfigItem {
   icon?: string;
-  getChildren?: (params: any) => Promise<ITreeNode[]>;
+  getChildren: (params: any) => Promise<ITreeNode[]>;
   next?: TreeNodeType;
   operationColumn?: OperationColumn[]
 }
@@ -70,7 +70,7 @@ export const treeConfig: { [key in TreeNodeType]: ITreeConfigItem } = {
             return {
               key: t.id!,
               name: t.alias,
-              nodeType: TreeNodeType.DATA_SOURCE,
+              treenodeType: TreeNodeType.DATA_SOURCE,
             }
           })
           r(data);
@@ -88,7 +88,7 @@ export const treeConfig: { [key in TreeNodeType]: ITreeConfigItem } = {
             return {
               key: t.name,
               name: t.name,
-              nodeType: TreeNodeType.DATABASE,
+              treeNodeType: TreeNodeType.DATABASE,
             }
           })
           r(data);
@@ -111,7 +111,7 @@ export const treeConfig: { [key in TreeNodeType]: ITreeConfigItem } = {
             return {
               key: t.name,
               name: t.name,
-              nodeType: TreeNodeType.SCHEMAS,
+              treeNodeType: TreeNodeType.SCHEMAS,
               schemaName: t.name,
             }
           })
@@ -122,7 +122,7 @@ export const treeConfig: { [key in TreeNodeType]: ITreeConfigItem } = {
           //     {
           //       key: params.databaseName + 'tables',
           //       name: 'tables',
-          //       nodeType: TreeNodeType.TABLES,
+          //       treeNodeType: TreeNodeType.TABLES,
           //     }
           //   ]
           //   r(data, 'custom');
@@ -145,7 +145,7 @@ export const treeConfig: { [key in TreeNodeType]: ITreeConfigItem } = {
           {
             key: parentData.name + 'tables',
             name: 'tables',
-            nodeType: TreeNodeType.TABLES,
+            treeNodeType: TreeNodeType.TABLES,
           }
         ]
         r(data);
@@ -159,20 +159,14 @@ export const treeConfig: { [key in TreeNodeType]: ITreeConfigItem } = {
     icon: '\ueac5',
     getChildren: (params: IGetListParams) => {
       return new Promise((r: (value: ITreeNode[]) => void, j) => {
-        let p = {
-          dataSourceId: params.dataSourceId,
-          databaseName: params.databaseName,
-          schemaName: params.schemaName,
-          pageNo: 1,
-          pageSize: 999,
-        }
 
-        mysqlServer.getList(p).then(res => {
+        mysqlServer.getList(params).then(res => {
           const tableList: ITreeNode[] = res.data?.map((item: any) => {
             return {
               name: item.name,
-              nodeType: TreeNodeType.TABLE,
+              treeNodeType: TreeNodeType.TABLE,
               key: item.name,
+              isLeaf: false
             }
           })
           r(tableList);
@@ -192,17 +186,17 @@ export const treeConfig: { [key in TreeNodeType]: ITreeConfigItem } = {
         const tableList = [
           {
             name: 'columns',
-            nodeType: TreeNodeType.COLUMNS,
+            treeNodeType: TreeNodeType.COLUMNS,
             key: 'columns',
           },
           {
             name: 'keys',
-            nodeType: TreeNodeType.KEYS,
+            treeNodeType: TreeNodeType.KEYS,
             key: 'keys',
           },
           {
             name: 'indexs',
-            nodeType: TreeNodeType.INDEXES,
+            treeNodeType: TreeNodeType.INDEXES,
             key: 'indexs',
           },
         ]
@@ -223,7 +217,7 @@ export const treeConfig: { [key in TreeNodeType]: ITreeConfigItem } = {
           const tableList: ITreeNode[] = res?.map(item => {
             return {
               name: item.name,
-              nodeType: TreeNodeType.COLUMN,
+              treeNodeType: TreeNodeType.COLUMN,
               key: item.name,
               isLeaf: true,
               columnType: item.columnType,
@@ -249,7 +243,7 @@ export const treeConfig: { [key in TreeNodeType]: ITreeConfigItem } = {
           const tableList: ITreeNode[] = res?.map(item => {
             return {
               name: item.name,
-              nodeType: TreeNodeType.KEY,
+              treeNodeType: TreeNodeType.KEY,
               key: item.name,
               isLeaf: true,
             }
@@ -274,7 +268,7 @@ export const treeConfig: { [key in TreeNodeType]: ITreeConfigItem } = {
           const tableList: ITreeNode[] = res?.map(item => {
             return {
               name: item.name,
-              nodeType: TreeNodeType.INDEX,
+              treeNodeType: TreeNodeType.INDEX,
               key: item.name,
               isLeaf: true,
             }

@@ -1,7 +1,7 @@
 import React, { memo, useContext, useState } from 'react';
 import classnames from 'classnames';
 import styles from './index.less';
-import Iconfont from '../../Iconfont';
+import Iconfont from '@/components/Iconfont';
 import { MenuProps, message } from 'antd';
 import { Modal, Input } from 'antd';
 // import { Menu } from 'antd';
@@ -74,7 +74,7 @@ function TreeNodeRightClick(props: IProps) {
         icon: '\ue62a',
         handle: () => {
           connectionServer.remove({ id: +data.key }).then(res => {
-            treeConfig[TreeNodeType.DATASOURCES]?.getChildren!({} as any).then(res => {
+            treeConfig[TreeNodeType.DATA_SOURCES]?.getChildren!({} as any).then(res => {
               setTreeData(res);
             })
           })

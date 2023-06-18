@@ -4,8 +4,10 @@ import classnames from 'classnames';
 import { Cascader, Divider } from 'antd';
 import connectionService from '@/service/connection';
 import { treeConfig } from '../Tree/treeConfig';
+import Tree from '../Tree';
 import Iconfont from '@/components/Iconfont';
 import { TreeNodeType } from '@/constants/tree';
+import { ITreeNode } from '@/typings/tree'
 import { useReducerContext } from '../../index';
 import { workspaceActionType } from '../../context';
 interface IProps {
@@ -14,8 +16,6 @@ interface IProps {
 
 export default memo<IProps>(function WorkspaceLeft(props) {
   const { className } = props;
-  const { state, dispatch } = useReducerContext();
-  const {currentDatabase} = state;
 
   return <div className={classnames(styles.box, className)}>
     <div className={styles.header}>
@@ -23,12 +23,7 @@ export default memo<IProps>(function WorkspaceLeft(props) {
     </div>
     <div className={styles.save_box}>Save</div>
     <Divider />
-    <div className={styles.table_box}>
-      connection
-      <div>{currentDatabase.databaseSourceId}</div>
-      <div>{currentDatabase.databaseName}</div>
-      <div>{currentDatabase.schemaName}</div>
-    </div>
+    <RenderTableBox></RenderTableBox>
   </div>
 })
 
@@ -38,11 +33,10 @@ interface Option {
   children?: Option[];
 }
 
-
-export function RenderSelectDatabase() {
+function RenderSelectDatabase() {
   const [options, setOptions] = useState<Option[]>();
   const { state, dispatch } = useReducerContext();
-  const {currentDatabase} = state
+  const {currentDatabase} = state;
 
   useEffect(() => {
     getDataSource();
@@ -72,13 +66,8 @@ export function RenderSelectDatabase() {
       return t.label;
     });
 
-    const currentWorkspaceDatabase = {
-      labelArr,
-      valueArr,
-    }
-
     const currentDatabase = {
-      databaseSourceId: valueArr[0],
+      dataSourceId: valueArr[0],
       databaseSourceName: labelArr[0],
       databaseName: labelArr[1],
       schemaName: labelArr[2],
@@ -136,9 +125,9 @@ export function RenderSelectDatabase() {
   );
 
   function renderCurrentSelected(){
-    const {databaseName, schemaName, databaseSourceName} = currentDatabase
+    const {databaseName, schemaName, databaseSourceName} = currentDatabase;
     const currentSelectedArr = [databaseSourceName,databaseName,schemaName].filter(t=>t);
-    return currentSelectedArr.join('/')
+    return currentSelectedArr.join('/');
   }
 
 
@@ -164,4 +153,36 @@ export function RenderSelectDatabase() {
       </div>
     </div>
   );
+}
+
+function RenderTableBox(){
+  const { state, dispatch } = useReducerContext();
+  const {currentDatabase} = state;
+  const [initialData,setInitialData] = useState<ITreeNode[]>();
+
+  // connection
+  // <div>{currentDatabase.dataSourceId}</div>
+  // <div>{currentDatabase.databaseName}</div>
+  // <div>{currentDatabase.schemaName}</div>
+
+  useEffect(()=>{
+    getInitialData();
+  },[])
+
+  function getInitialData(){
+    treeConfig[TreeNodeType.TABLES].getChildren({
+      dataSourceId: currentDatabase.dataSourceId,
+      databaseName: currentDatabase.databaseName,
+      schemaName: currentDatabase.schemaName,
+      pageNo: 1,
+      pageSize: 999,
+    }).then(res=>{
+      setInitialData(res);
+    })
+  }
+
+
+  return <div className={styles.table_box}>
+    <Tree className={styles.tree} initialData={initialData}></Tree>
+  </div>
 }
