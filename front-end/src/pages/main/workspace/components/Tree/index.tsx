@@ -135,11 +135,11 @@ function TreeNode(props: TreeNodeIProps) {
     />
   }
 
-  const recognizeIcon = (nodeType: TreeNodeType) => {
-    if (nodeType === TreeNodeType.DATA_SOURCE) {
-      return databaseMap[data.databaseType]?.icon
+  const recognizeIcon = (treeNodeType: TreeNodeType) => {
+    if (treeNodeType === TreeNodeType.DATA_SOURCE) {
+      return databaseMap[data.databaseType!]?.icon
     } else {
-      return switchIcon[nodeType]?.icon || '\ue62c'
+      return switchIcon[treeNodeType]?.icon || '\ue62c'
     }
   }
 

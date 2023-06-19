@@ -22,7 +22,13 @@ export function getAntdThemeConfig(theme: ITheme) {
 export function InjectThemeVar(token: { [key in string]: string }, theme: ThemeType, primaryColor: PrimaryColorType) {
   let css = '';
   Object.keys(token).map(t => {
-    css = css +`--${camelToDash(t)}: ${token[t]};\n`
+    const attributeName = camelToDash(t);
+    // 将需要px的数字带上px
+    if(attributeName){
+
+    }
+
+    css = css +`--${attributeName}: ${token[t]};\n`
   })
 
   const container = `html[theme='${theme}'],html[primary-color='${primaryColor}']{

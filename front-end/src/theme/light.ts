@@ -1,5 +1,6 @@
 import { theme } from 'antd';
 import { PrimaryColorType } from "@/constants/common";
+import {commonToken} from './common';
 
 type IAntdPrimaryColor = {
   [key in PrimaryColorType]: any;
@@ -23,8 +24,8 @@ const antdLightTheme = {
   customName: "light",
   antdPrimaryColor,
   token: {
-    "wireframe": true,
-    "borderRadius": 4,
+    ...commonToken,
+    "colorBgBase": "#fff",
     "colorBgContainer": "#fff",
     "colorBgElevated": "#F8F9FA",
     "colorBorder": "#d3d3d4"
