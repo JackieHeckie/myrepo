@@ -165,7 +165,7 @@ function RenderTableBox() {
   }, [currentDatabase])
 
   function getInitialData() {
-    treeConfig[TreeNodeType.TABLES].getChildren({
+    treeConfig[TreeNodeType.TABLES].getChildren!({
       dataSourceId: currentDatabase.dataSourceId,
       databaseName: currentDatabase.databaseName,
       schemaName: currentDatabase.schemaName,

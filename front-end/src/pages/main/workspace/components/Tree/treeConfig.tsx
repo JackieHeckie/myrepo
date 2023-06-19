@@ -51,9 +51,9 @@ export enum OperationColumn {
 
 export interface ITreeConfigItem {
   icon?: string;
-  getChildren: (params: any) => Promise<ITreeNode[]>;
+  getChildren?: (params: any) => Promise<ITreeNode[]>;
   next?: TreeNodeType;
-  operationColumn?: OperationColumn[]
+  operationColumn?: OperationColumn[];
 }
 
 export const treeConfig: { [key in TreeNodeType]: ITreeConfigItem } = {
@@ -64,13 +64,12 @@ export const treeConfig: { [key in TreeNodeType]: ITreeConfigItem } = {
           pageNo: 1,
           pageSize: 999
         }
-
         connectionService.getList(p).then(res => {
           const data: ITreeNode[] = res.data.map(t => {
             return {
               key: t.id!,
               name: t.alias,
-              treenodeType: TreeNodeType.DATA_SOURCE,
+              treeNodeType: TreeNodeType.DATA_SOURCE,
             }
           })
           r(data);
@@ -166,7 +165,12 @@ export const treeConfig: { [key in TreeNodeType]: ITreeConfigItem } = {
               name: item.name,
               treeNodeType: TreeNodeType.TABLE,
               key: item.name,
-              isLeaf: false
+              getChildrenParams: {
+                dataSourceId: params.dataSourceId,
+                databaseName: params.databaseName,
+                schemaName: params.schemaName,
+                tableName: item.name,
+              }
             }
           })
           r(tableList);
@@ -181,23 +185,26 @@ export const treeConfig: { [key in TreeNodeType]: ITreeConfigItem } = {
   },
   [TreeNodeType.TABLE]: {
     icon: '\ue63e',
-    getChildren: () => {
+    getChildren: (params) => {
       return new Promise((r: (value: ITreeNode[]) => void, j) => {
         const tableList = [
           {
             name: 'columns',
             treeNodeType: TreeNodeType.COLUMNS,
             key: 'columns',
+            getChildrenParams: params.getChildrenParams
           },
           {
             name: 'keys',
             treeNodeType: TreeNodeType.KEYS,
             key: 'keys',
+            getChildrenParams: params.getChildrenParams
           },
           {
             name: 'indexs',
             treeNodeType: TreeNodeType.INDEXES,
             key: 'indexs',
+            getChildrenParams: params.getChildrenParams
           },
         ]
 

@@ -5,8 +5,14 @@ export interface ITreeNode {
   key: string | number;
   name: string;
   treeNodeType: TreeNodeType;
-  databaseType: DatabaseTypeCode;
+  databaseType?: DatabaseTypeCode;
   isLeaf?: boolean;
   children?: ITreeNode[];
   columnType?: string;
+  getChildrenParams?: {
+    dataSourceId?: number;	
+    databaseName?: string;
+    schemaName?: string;
+    tableName?: string;
+  };
 }
