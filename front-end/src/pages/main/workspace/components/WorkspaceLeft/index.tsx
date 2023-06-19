@@ -36,7 +36,7 @@ interface Option {
 function RenderSelectDatabase() {
   const [options, setOptions] = useState<Option[]>();
   const { state, dispatch } = useReducerContext();
-  const {currentDatabase} = state;
+  const { currentDatabase } = state;
 
   useEffect(() => {
     getDataSource();
@@ -74,7 +74,7 @@ function RenderSelectDatabase() {
     }
 
     dispatch({
-      type:workspaceActionType.CURRENT_DATABASE, 
+      type: workspaceActionType.CURRENT_DATABASE,
       payload: currentDatabase
     });
   };
@@ -124,9 +124,9 @@ function RenderSelectDatabase() {
     </div>
   );
 
-  function renderCurrentSelected(){
-    const {databaseName, schemaName, databaseSourceName} = currentDatabase;
-    const currentSelectedArr = [databaseSourceName,databaseName,schemaName].filter(t=>t);
+  function renderCurrentSelected() {
+    const { databaseName, schemaName, databaseSourceName } = currentDatabase;
+    const currentSelectedArr = [databaseSourceName, databaseName, schemaName].filter(t => t);
     return currentSelectedArr.join('/');
   }
 
@@ -155,28 +155,23 @@ function RenderSelectDatabase() {
   );
 }
 
-function RenderTableBox(){
+function RenderTableBox() {
   const { state, dispatch } = useReducerContext();
-  const {currentDatabase} = state;
-  const [initialData,setInitialData] = useState<ITreeNode[]>();
+  const { currentDatabase } = state;
+  const [initialData, setInitialData] = useState<ITreeNode[]>();
 
-  // connection
-  // <div>{currentDatabase.dataSourceId}</div>
-  // <div>{currentDatabase.databaseName}</div>
-  // <div>{currentDatabase.schemaName}</div>
-
-  useEffect(()=>{
+  useEffect(() => {
     getInitialData();
-  },[])
+  }, [currentDatabase])
 
-  function getInitialData(){
+  function getInitialData() {
     treeConfig[TreeNodeType.TABLES].getChildren({
       dataSourceId: currentDatabase.dataSourceId,
       databaseName: currentDatabase.databaseName,
       schemaName: currentDatabase.schemaName,
       pageNo: 1,
       pageSize: 999,
-    }).then(res=>{
+    }).then(res => {
       setInitialData(res);
     })
   }
